@@ -10,6 +10,8 @@ let usuario = {
 
 // Pedido Actual
 let pedido = []
+    // respuesta obtenida del cliente
+let respuesta = ""
 
 // MOSTRAR MENÚ
 const mostrarMenu = () => {
@@ -20,27 +22,51 @@ const mostrarMenu = () => {
         console.log(`${plato.cod} - ${plato.nombre} - ${plato.precio}€`)
     })
 }
-const leerPedido = () => prompt("Teclea código plato. Pulse 'S' para salir")
+const leerPedido = () => prompt("Teclea código plato. Pulse 'S' para salir").toUpperCase()
 const pedidoDelUsuario = (elegir) => {
-        let pedido = (CARTA.find(ped => (elegir === ped.cod)))
-        if (typeof pedido.precio != undefined) {
-            alert(`Hola ${usuario.nombre}, El precio de su pedido es ${pedido.precio} €`)
-        } else
-            alert("El plato no existe en la carta!!")
+        if (!elegir) return alert("Código introducido no válido!!")
+        let producto = (CARTA.find(ped => (elegir === ped.cod)))
+        if (!producto) return alert("El plato no existe en la carta!!")
+        pedido.push(producto)
+        return alert(`Hola ${usuario.nombre}, Has pedido ${producto.nombre} y su precio es ${producto.precio} €`)
     }
-    // Enseñar el menú al inicio
-mostrarMenu()
-let respuesta = ""
-    //Bucle que mostrara el precio del codigo pedido dando la oportunidad de volver a pedir otro
+    // CALCULAR PEDIDO
+const calcularPedido = () => {
+        let total = 0 // resetear
+        for (product of pedido) {
+            total += product.precio
+        }
+        return total
+    }
+    // VER PEDIDO
+const verPedido = () => {
+    let mostrarPedido = ""
+    for (ped of pedido) {
+        mostrarPedido += `${ped.cod} - ${ped.nombre} - ${ped.precio}€\n`
+    }
+    return mostrarPedido
+}
 
-while ("S" !== respuesta) {
+// Enseñar el menú al inicio
+mostrarMenu()
+
+//Bucle que mostrara el pedido introducido insertando el array pedidos dando la oportunidad de volver a pedir otro
+
+do {
     //Lee el codigo del pedido
     respuesta = leerPedido()
-
-    if ("S" !== respuesta && respuesta !== null && respuesta != "") {
-        //Muestra mensaje por consola con el precio del pedido
+    if ("S" !== respuesta && respuesta !== "") {
+        //Muestra mensaje con el pedido introducido con su precio
         pedidoDelUsuario(respuesta)
             //Vuelve a mostrar el menu por si se desea hacer otro pedido
-        mostrarMenu()
+            // mostrarMenu()
     }
+} while (respuesta !== 'S')
+
+if (respuesta === 'S') alert("Gracias, espero verle otro dia!!")
+if (pedido) {
+    alert(`Resumen de lo que ha pedido:
+    
+    ${verPedido()}
+    El total es: ${calcularPedido()}€ `)
 }
